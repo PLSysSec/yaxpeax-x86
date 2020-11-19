@@ -9,14 +9,14 @@ use yaxpeax_arch::{AddressDiff, Decoder, LengthedInstruction};
 #[cfg(feature="use-serde")]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RegSpec {
-    num: u8,
-    bank: RegisterBank
+    pub num: u8,
+    pub bank: RegisterBank
 }
 #[cfg(not(feature="use-serde"))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, Eq, PartialEq)]
 pub struct RegSpec {
-    num: u8,
-    bank: RegisterBank
+    pub num: u8,
+    pub bank: RegisterBank
 }
 
 use core::hash::Hash;
@@ -814,7 +814,7 @@ impl RegisterClass {
 #[allow(non_camel_case_types)]
 #[cfg(feature="use-serde")]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
-enum RegisterBank {
+pub enum RegisterBank {
     Q = 0, D = 2, W = 4, B = 6, rB = 8, // Quadword, Dword, Word, Byte
     CR = 10, DR = 12, S = 14, EIP = 30, RIP = 31, EFlags = 32, RFlags = 33,  // Control reg, Debug reg, Selector, ...
     X = 15, Y = 19, Z = 23,    // XMM, YMM, ZMM
@@ -825,7 +825,7 @@ enum RegisterBank {
 #[allow(non_camel_case_types)]
 #[cfg(not(feature="use-serde"))]
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash)]
-enum RegisterBank {
+pub enum RegisterBank {
     Q = 0, D = 2, W = 4, B = 6, rB = 8, // Quadword, Dword, Word, Byte
     CR = 10, DR = 12, S = 14, EIP = 30, RIP = 31, EFlags = 32, RFlags = 33,  // Control reg, Debug reg, Selector, ...
     X = 15, Y = 19, Z = 23,    // XMM, YMM, ZMM
@@ -1864,12 +1864,12 @@ pub struct Instruction {
     sib_index: RegSpec,
     vex_reg: RegSpec,
     scale: u8,
-    length: u8,
+    pub length: u8,
     operand_count: u8,
     operands: [OperandSpec; 4],
     imm: u64,
-    disp: u64,
-    opcode: Opcode,
+    pub disp: u64,
+    pub opcode: Opcode,
 }
 
 impl yaxpeax_arch::Instruction for Instruction {
@@ -6171,7 +6171,6 @@ fn read_operands<T: Iterator<Item=u8>>(decoder: &InstDecoder, mut bytes_iter: T,
             instruction.operand_count = 1;
         },
         1 => {
-            instruction.opcode = base_opcode_map((modrm >> 3) & 7);
             instruction.operands[0] = mem_oper;
             instruction.operands[1] = OperandSpec::ImmI8;
             instruction.operand_count = 2;
